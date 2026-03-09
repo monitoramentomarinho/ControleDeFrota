@@ -624,7 +624,10 @@ def carregarPagina():
                 st.rerun()
                 
         case "home":
-            pass # A mensagem de home já é tratada acima
+            lista_reservas = buscar_reservas()
+            st.subheader("Reservas atuais:")
+            for reserva in lista_reservas:
+                st.write(f"- {reserva['Veiculo_id']} - {reserva['data_retirada']} to {reserva['data_devolucao']}")
             
         case _:
             st.write("Página não encontrada.")
@@ -639,7 +642,7 @@ with col1:
             st.session_state["pagina"] = "home"
             st.rerun() # Força a tela a atualizar na hora
         
-        if st.button("Reservas", icon="🗓️", use_container_width=True):
+        if st.button("Calendário de Reservas", icon="🗓️", use_container_width=True):
             st.session_state["pagina"] = "reservas"
             st.rerun() # Força a tela a atualizar na hora
             
@@ -654,3 +657,4 @@ with col1:
 with col2: 
 
     carregarPagina()
+
