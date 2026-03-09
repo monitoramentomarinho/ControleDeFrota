@@ -1,0 +1,18 @@
+[theme]
+# Cor principal (Botões primários, sliders, caixas de seleção, etc)
+# Exemplo: Um azul oceano
+primaryColor = "#fdcd2d"
+
+# Cor de fundo principal do aplicativo (A área central)
+backgroundColor = "#052847"
+
+# Cor de fundo secundária (A barra lateral e fundos de destaque)
+# Exemplo: Um cinza/azul bem clarinho
+secondaryBackgroundColor = "#083c69"
+
+# Cor do texto principal
+textColor = "#ffffff"
+
+
+# Fonte padrão do app (Opções: "sans serif", "serif", "monospace")
+font = "sans serif"
