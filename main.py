@@ -236,7 +236,7 @@ def carregarPagina():
             dados_veiculos = buscar_veiculos()
             dados_motoristas = buscar_motoristas()
             
-            veiculo_map = {v["id"]: f"{v['Modelo']} ({v['Placa']})" for v in dados_veiculos}
+            veiculo_map = {v["id"]: f"{v['Modelo']} ({v['Referencia']})" for v in dados_veiculos}
             motorista_map = {m["id"]: m["Nome"] for m in dados_motoristas}
             
             opcoes_veic = ["Todos"] + list(veiculo_map.keys())
@@ -662,5 +662,6 @@ with col1:
 with col2: 
 
     carregarPagina()
+
 
 
