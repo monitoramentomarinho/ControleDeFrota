@@ -477,7 +477,7 @@ def carregarPagina():
             lista_motoristas = buscar_motoristas()
             lista_reservas = buscar_reservas()
             
-            mapa_veiculos = {v["id"]: f"{v['Modelo']} ({v['Placa']})" for v in lista_veiculos} 
+            mapa_veiculos = {v["id"]: f"{v['Modelo']} ({v['Referencia']})" for v in lista_veiculos} 
             status_map = {v["id"]: v["Status"] for v in lista_veiculos}
             mapa_motoristas = {m["id"]: m["Nome"] for m in lista_motoristas}
             
@@ -662,6 +662,7 @@ with col1:
 with col2: 
 
     carregarPagina()
+
 
 
 
