@@ -625,9 +625,14 @@ def carregarPagina():
                 
         case "home":
             lista_reservas = buscar_reservas()
-            st.subheader("Reservas atuais:")
-            for reserva in lista_reservas:
-                st.write(f"- {reserva['Veiculo_id']} - {reserva['data_retirada']} to {reserva['data_devolucao']}")
+            st.subheader("Próximas Reservas:")
+            if lista_reservas:
+                for reserva in lista_reservas:  # Mostra apenas as 5 próximas reservas
+                    data_inicio = datetime.datetime.fromisoformat(reserva['data_retirada']).strftime("%d/%m/%Y")
+                    data_fim = datetime.datetime.fromisoformat(reserva['data_devolucao']).strftime("%d/%m/%Y")
+                    st.write(f"- {reserva['motivo_locacao']} ({data_inicio} a {data_fim})")
+            else:
+                st.write("Nenhuma reserva futura encontrada.")
             
         case _:
             st.write("Página não encontrada.")
@@ -657,4 +662,5 @@ with col1:
 with col2: 
 
     carregarPagina()
+
 
