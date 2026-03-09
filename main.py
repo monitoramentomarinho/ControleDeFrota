@@ -635,6 +635,10 @@ col1, col2 = st.columns([1, 4])
 with col1:
     with st.container(border=True, height="stretch"):
         st.subheader("Menu")
+        if st.button("Início", icon="🏠", use_container_width=True):
+            st.session_state["pagina"] = "home"
+            st.rerun() # Força a tela a atualizar na hora
+        
         if st.button("Reservas", icon="🗓️", use_container_width=True):
             st.session_state["pagina"] = "reservas"
             st.rerun() # Força a tela a atualizar na hora
@@ -648,4 +652,5 @@ with col1:
             st.rerun()
 
 with col2: 
+
     carregarPagina()
