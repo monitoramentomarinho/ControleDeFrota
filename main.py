@@ -14,7 +14,7 @@ def iniciar_supabase():
     return sb.create_client(url, key)
 
 supabase = iniciar_supabase()
-
+print("Conexão com Supabase estabelecida com sucesso!")
 # 2. CACHE DE DADOS: Evita ir ao banco a cada clique (Expira a cada 60 segundos)
 @st.cache_data(ttl=60)
 def buscar_reservas():
