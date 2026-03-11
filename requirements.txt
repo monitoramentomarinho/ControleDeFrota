@@ -1,5 +1,12 @@
-streamlit
-supabase
-streamlit_calendar
-streamlit_phone_number
-datetime
+# Streamlit framework
+streamlit>=1.28.0
+
+# Banco de dados
+supabase>=2.3.0
+
+# Componentes Streamlit
+streamlit_calendar>=0.1.0
+streamlit_phone_number>=0.0.14
+
+# Utilitários
+python-dateutil>=2.8.2
