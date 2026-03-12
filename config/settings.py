@@ -57,6 +57,8 @@ RESERVA_FIELDS = {
     "data_devolucao": "data_devolucao",
     "veiculo_id": "Veiculo_id",
     "motorista_id": "id_motorista",
+    "destino": "destino",
+    "combustivel_restante": "combustivel_restante",
 }
 
 # ============= CAMPOS DO VEÍCULO =============
