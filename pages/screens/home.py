@@ -21,3 +21,5 @@ def renderizar():
             st.write(f"- {reserva['motivo_locacao']} ({data_inicio} a {data_fim})")
     else:
         st.write("Nenhuma reserva futura encontrada.")
+
+    

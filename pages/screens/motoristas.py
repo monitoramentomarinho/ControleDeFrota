@@ -12,7 +12,7 @@ from database.supabase import (
     clear_motoristas_cache,
 )
 from utils.formatters import extrair_numero_telefone
-from ui.components.components import exibir_foto_motorista
+from pages.components.components import exibir_foto_motorista
 from config.settings import STORAGE_MOTORISTAS_PATH
 
 

@@ -5,7 +5,7 @@ import streamlit as st
 import streamlit_calendar as st_cal
 from database.supabase import fetch_reservas, fetch_veiculos, fetch_motoristas, clear_reservas_cache
 from utils.formatters import criar_mapa_veiculos, criar_mapa_motoristas, exibir_reserva_no_calendario
-from ui.styles import CALENDAR_CSS
+from pages.styles import CALENDAR_CSS
 from config.settings import CALENDAR_OPTIONS
 from utils.date_utils import hoje
 
@@ -85,7 +85,7 @@ def renderizar():
     state = st_cal.calendar(events=eventos, options=opcoes_calendario, custom_css=CALENDAR_CSS, key=chave_dinamica)
     
     if "eventClick" in state:
-        from ui.components.components import mostrar_detalhes
+        from pages.components.components import mostrar_detalhes
         mostrar_detalhes(state["eventClick"])
     
     # Botão de nova reserva

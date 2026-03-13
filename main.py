@@ -1,12 +1,11 @@
 """
 ControleDeFrota - Sistema de Gerenciamento de Reservas de Veículos (PMAP)
-
-Aplicação principal que coordena todas as telas e a navegação.
+Aplicação principal usando a navegação nativa do Streamlit (st.navigation)
 """
 import streamlit as st
 from config.settings import APP_TITLE, APP_ICON, APP_LAYOUT
 
-# Configuração da página
+# 1. Configuração da página sempre vem primeiro
 st.set_page_config(
     page_title=APP_TITLE,
     page_icon=APP_ICON,
@@ -14,62 +13,26 @@ st.set_page_config(
     initial_sidebar_state="collapsed" 
 )
 
-# Inicializa estado da aplicação
-if "pagina" not in st.session_state:
-    st.session_state["pagina"] = "home"
+# 2. Importa as suas telas que já estão prontas
+from pages.screens import home, reservas, veiculos, motoristas, cadastro_reserva, editar_reserva
 
+# 3. Transforma as suas funções em Páginas Nativas do Streamlit
+# O parâmetro url_path garante que cada tela tenha seu próprio link único (ex: /home, /veiculos)
+pg_home = st.Page(home.renderizar, title="Início", icon="🏠", default=True, url_path="home")
+pg_reservas = st.Page(reservas.renderizar, title="Calendário de Reservas", icon="🗓️", url_path="reservas")
+pg_veiculos = st.Page(veiculos.renderizar, title="Veículos", icon="🛻", url_path="veiculos")
+pg_motoristas = st.Page(motoristas.renderizar, title="Motoristas", icon="👥", url_path="motoristas")
 
+# Agrupando telas de formulário em uma seção separada
+pg_cad_reserva = st.Page(cadastro_reserva.renderizar, title="Cadastrar Nova Reserva", icon="➕", url_path="cadastrar_reserva")
+pg_edit_reserva = st.Page(editar_reserva.renderizar, title="Editar Reserva Existente", icon="✏️", url_path="editar_reserva")
 
-def main():
-    """Função principal que renderiza a página atual."""
-    # Importa as screens
-    from ui.screens import home, reservas, veiculos, motoristas, cadastro_reserva, editar_reserva
-    
-    # Mapeia página para função de renderização
-    screens = {
-        "home": home.renderizar,
-        "reservas": reservas.renderizar,
-        "veiculos": veiculos.renderizar,
-        "motoristas": motoristas.renderizar,
-        "cadastro_reserva": cadastro_reserva.renderizar,
-        "editar_reserva": editar_reserva.renderizar,
-    }
-    
-    # Renderiza a tela atual
-    pagina_atual = st.session_state.get("pagina", "home")
-    if pagina_atual in screens:
-        screens[pagina_atual]()
-    else:
-        st.error("Página não encontrada.")
+# 4. Configura o menu e as seções
+menu = {
+    "Menu Principal": [pg_home, pg_reservas, pg_veiculos, pg_motoristas],
+    "Ações e Lançamentos": [pg_cad_reserva, pg_edit_reserva]
+}
 
-
-def renderizar_sidebar():
-    """Renderiza o menu da barra lateral."""
-    with st.sidebar:
-        st.subheader("Menu")
-        
-        if st.button("Início", icon="🏠", use_container_width=True):
-            st.session_state["pagina"] = "home"
-            st.rerun()
-        
-        if st.button("Calendário de Reservas", icon="🗓️", use_container_width=True):
-            st.session_state["pagina"] = "reservas"
-            st.rerun()
-        
-        if st.button("Veículos", icon="🛻", use_container_width=True):
-            st.session_state["pagina"] = "veiculos"
-            st.rerun()
-        
-        if st.button("Motoristas", icon="👥", use_container_width=True):
-            st.session_state["pagina"] = "motoristas"
-            st.rerun()
-
-
-if __name__ == "__main__":
-    renderizar_sidebar()
-    main()
-
-
-
-
-
+# 5. Roda a navegação mágica do Streamlit
+nav = st.navigation(menu)
+nav.run()
