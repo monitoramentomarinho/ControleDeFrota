@@ -7,7 +7,12 @@ import streamlit as st
 from config.settings import APP_TITLE, APP_ICON, APP_LAYOUT
 
 # Configuração da página
-st.set_page_config(page_title=APP_TITLE, page_icon=APP_ICON, layout=APP_LAYOUT)
+st.set_page_config(
+    page_title=APP_TITLE,
+    page_icon=APP_ICON,
+    layout=APP_LAYOUT,
+    initial_sidebar_state="collapsed" 
+)
 
 # Inicializa estado da aplicação
 if "pagina" not in st.session_state:
