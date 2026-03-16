@@ -99,13 +99,14 @@ def renderizar():
                         "id_motorista": motorista_id
                     }
                     update_reserva(reserva_id, dados_atualizados)
+                    clear_reservas_cache()
                     sincronizar_status_veiculo(veiculo_id)
                     
                     # Se trocou veículo, sincroniza o anterior também
                     if veiculo_id != reserva_atual["Veiculo_id"]:
                         sincronizar_status_veiculo(reserva_atual["Veiculo_id"])
                     
-                    clear_reservas_cache()
+                    
                     st.session_state["pagina"] = "reservas"
                     st.rerun()
     

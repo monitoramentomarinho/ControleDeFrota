@@ -43,10 +43,11 @@ def mostrar_detalhes(evento_info):
                 delete_reserva(reserva_id)
                 
                 veiculo_id = extended.get('veiculo_id')
+                clear_reservas_cache()
                 if veiculo_id:
                     sincronizar_status_veiculo(veiculo_id)
                 
-                clear_reservas_cache()
+                
                 st.rerun()
 
 

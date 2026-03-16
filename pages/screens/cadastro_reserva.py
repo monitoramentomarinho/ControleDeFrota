@@ -69,9 +69,12 @@ def renderizar():
                         "Veiculo_id": veiculo_id,
                         "id_motorista": motorista_id
                     }
-                    insert_reserva(nova_reserva)
-                    sincronizar_status_veiculo(veiculo_id)
-                    clear_reservas_cache()
-                    
-                    st.session_state["pagina"] = "reservas"
-                    st.rerun()
+                    result = insert_reserva(nova_reserva)
+                    if result.data:
+                        st.success("Reserva criada com sucesso!")
+                        clear_reservas_cache()
+                        sincronizar_status_veiculo(veiculo_id)
+                        st.session_state["pagina"] = "reservas"
+                        st.rerun()
+                    else:
+                        st.error("Erro ao criar reserva.")

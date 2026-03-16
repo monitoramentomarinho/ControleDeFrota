@@ -51,26 +51,35 @@ def criar_mapa_motoristas(motoristas):
     return {m["id"]: m["Nome"] for m in motoristas}
 
 
-def formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas):
-    """Formata uma reserva para ser exibida no calendário."""
+def formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas, mapa_cores=None):
+    """Formata uma reserva para ser exibida no calendário de forma segura."""
+    
+    # Tratamento de segurança para evitar falhas silenciosas do FullCalendar
+    motivo = reserva.get("motivo_locacao") or "Sem motivo"
+    
+    cor_evento = "#FF4B4B"
+    if mapa_cores and reserva["Veiculo_id"] in mapa_cores:
+        cor_evento = mapa_cores[reserva["Veiculo_id"]]
+    
     return {
-        "id": reserva["id"],
-        "title": f"🚗 {reserva['motivo_locacao']}",
-        "start": reserva["data_retirada"],
-        "end": reserva["data_devolucao"],
-        "backgroundColor": "#FF4B4B",
-        "borderColor": "#FF4B4B",
+        "id": str(reserva.get("id", "")), # Força ser string
+        "title": f"🚗 {motivo}",
+        "start": reserva.get("data_retirada"),
+        "end": reserva.get("data_devolucao"),
+        "backgroundColor": cor_evento,
+        "borderColor": cor_evento,
         "textColor": "#FFFFFF",
         "extendedProps": {
             "motorista": mapa_motoristas.get(reserva.get("id_motorista"), "N/A"),
-            "veiculo_nome": mapa_veiculos.get(reserva["Veiculo_id"], "Desconhecido"),
-            "veiculo_id": reserva["Veiculo_id"],
-            "motorista_nome": mapa_motoristas.get(reserva.get("id_motorista"), "Desconhecido")
+            "veiculo_nome": mapa_veiculos.get(reserva.get("Veiculo_id"), "Desconhecido"),
+            "veiculo_id": reserva.get("Veiculo_id"),
+            "motorista_nome": mapa_motoristas.get(reserva.get("id_motorista"), "Desconhecido"),
+            "debug_cor": cor_evento
         }
     }
 
 
-def exibir_reserva_no_calendario(reservas, mapa_veiculos, mapa_motoristas, filtro_veiculo="Todos", filtro_motorista="Todos"):
+def exibir_reserva_no_calendario(reservas, mapa_veiculos, mapa_motoristas, filtro_veiculo="Todos", filtro_motorista="Todos", mapa_cores=None):
     """Filtra e formata reservas para o calendário."""
     eventos = []
     for reserva in reservas:
@@ -81,6 +90,6 @@ def exibir_reserva_no_calendario(reservas, mapa_veiculos, mapa_motoristas, filtr
         if filtro_motorista != "Todos" and reserva.get("id_motorista") != filtro_motorista:
             continue
         
-        eventos.append(formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas))
+        eventos.append(formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas, mapa_cores))
     
     return eventos

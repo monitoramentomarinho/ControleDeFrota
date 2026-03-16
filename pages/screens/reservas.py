@@ -21,6 +21,8 @@ def renderizar():
     
     mapa_veiculos = criar_mapa_veiculos(dados_veiculos)
     mapa_motoristas = criar_mapa_motoristas(dados_motoristas)
+    mapa_cores = {v["id"]: v.get("Cor", "#FF4B4B") for v in dados_veiculos}
+    
     
     opcoes_veic = ["Todos"] + list(mapa_veiculos.keys())
     opcoes_mot = ["Todos"] + list(mapa_motoristas.keys())
@@ -83,7 +85,8 @@ def renderizar():
         mapa_veiculos,
         mapa_motoristas,
         st.session_state["filtro_veic"],
-        st.session_state["filtro_mot"]
+        st.session_state["filtro_mot"],
+        mapa_cores
     )
     
     # Renderiza calendário
