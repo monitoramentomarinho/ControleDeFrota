@@ -5,9 +5,9 @@ import streamlit as st
 import streamlit_calendar as st_cal
 from database.supabase import fetch_reservas, fetch_veiculos, fetch_motoristas, clear_reservas_cache
 from utils.formatters import criar_mapa_veiculos, criar_mapa_motoristas, exibir_reserva_no_calendario
+from pages.components.components import renderizar_filtros_reservas
 from pages.styles import CALENDAR_CSS
 from config.settings import CALENDAR_OPTIONS
-from utils.date_utils import hoje
 
 
 def renderizar():
@@ -22,53 +22,13 @@ def renderizar():
     mapa_veiculos = criar_mapa_veiculos(dados_veiculos)
     mapa_motoristas = criar_mapa_motoristas(dados_motoristas)
     mapa_cores = {v["id"]: v.get("Cor", "#FF4B4B") for v in dados_veiculos}
-    
-    
-    opcoes_veic = ["Todos"] + list(mapa_veiculos.keys())
-    opcoes_mot = ["Todos"] + list(mapa_motoristas.keys())
-    
-    # Inicializa filtros
-    if "filtro_data" not in st.session_state:
-        st.session_state["filtro_data"] = hoje()
-    if "filtro_veic" not in st.session_state:
-        st.session_state["filtro_veic"] = "Todos"
-    if "filtro_mot" not in st.session_state:
-        st.session_state["filtro_mot"] = "Todos"
-    
-    def limpar_filtros():
-        st.session_state["filtro_data"] = hoje()
-        st.session_state["filtro_veic"] = "Todos"
-        st.session_state["filtro_mot"] = "Todos"
-    
-    # Área de filtros
-    with st.expander("🔍 Buscar e Filtrar", expanded=True):
-        col_data, col_veic, col_mot, col_btn = st.columns([2, 2, 2, 1])
-        
-        with col_data:
-            st.date_input("Ir para a data:", format="DD/MM/YYYY", key="filtro_data")
-        
-        with col_veic:
-            st.selectbox(
-                "Veículo",
-                options=opcoes_veic,
-                format_func=lambda x: "Todos" if x == "Todos" else mapa_veiculos[x],
-                key="filtro_veic"
-            )
-        
-        with col_mot:
-            st.selectbox(
-                "Motorista",
-                options=opcoes_mot,
-                format_func=lambda x: "Todos" if x == "Todos" else mapa_motoristas[x],
-                key="filtro_mot"
-            )
-        
-        with col_btn:
-            st.write("")
-            st.write("")
-            st.button("🔄 Resetar", on_click=limpar_filtros, use_container_width=True)
-    
-    #Legenda dos veículos:
+
+    # Renderiza filtros reutilizáveis (calendário usa 1 data)
+    filtro_data, filtro_veic, filtro_mot = renderizar_filtros_reservas(
+        mapa_veiculos, mapa_motoristas, modo="calendario"
+    )
+
+    # Legenda dos veículos:
     st.markdown("### Legenda dos Veículos:")
     for veiculos in dados_veiculos:
         st.markdown(f"<div style='background-color: {veiculos['Cor']}; padding: 5px; margin: 5px; border-radius: 5px; color: white;'>{veiculos['Modelo']} - {veiculos['Referencia']}</div>", unsafe_allow_html=True)
@@ -77,16 +37,18 @@ def renderizar():
     
     # Configuração do calendário
     opcoes_calendario = CALENDAR_OPTIONS.copy()
-    opcoes_calendario["initialDate"] = str(st.session_state["filtro_data"])
+    opcoes_calendario["initialDate"] = str(filtro_data)
     
     # Filtra e formata eventos
     eventos = exibir_reserva_no_calendario(
         dados_reservas,
         mapa_veiculos,
         mapa_motoristas,
-        st.session_state["filtro_veic"],
-        st.session_state["filtro_mot"],
-        mapa_cores
+        filtro_veic,
+        filtro_mot,
+        filtro_data_inicio=None,
+        filtro_data_fim=None,
+        mapa_cores=mapa_cores,
     )
     
     # Renderiza calendário

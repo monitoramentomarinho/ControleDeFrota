@@ -11,7 +11,7 @@ from database.supabase import (
     upload_imagem,
     clear_motoristas_cache,
 )
-from utils.formatters import extrair_numero_telefone
+from utils.formatters import extrair_numero_telefone, formatar_telefone_br
 from pages.components.components import exibir_foto_motorista
 from config.settings import STORAGE_MOTORISTAS_PATH
 
@@ -55,6 +55,12 @@ def renderizar():
     with st.form("Formulário de Motorista", clear_on_submit=True):
         nome = st.text_input("Nome Completo")
         telefone = st_phone_number("Telefone", default_country="BR")
+
+        # Mostrar o telefone formatado enquanto o usuário digita
+        telefone_formatado = formatar_telefone_br(extrair_numero_telefone(telefone))
+        if telefone_formatado:
+            st.markdown(f"**Telefone válido:** {telefone_formatado}")
+
         foto_perfil = st.file_uploader("Foto de Perfil", type=["jpg", "jpeg", "png"])
         
         if st.form_submit_button("Salvar Motorista"):

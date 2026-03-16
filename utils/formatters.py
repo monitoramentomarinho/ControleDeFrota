@@ -6,20 +6,19 @@ from utils.date_utils import para_data_br
 
 
 def extrair_numero_telefone(telefone_raw):
-    """
-    Extrai o número de telefone, tratando o caso onde ele vem como dicionário do widget.
-    
+    """Extrai o número de telefone, tratando o caso onde ele vem como dicionário do widget.
+
     Args:
         telefone_raw: String ou dict com dados do telefone
-    
+
     Returns:
-        String com o número de telefone limpo
+        String com o número de telefone limpo (apenas dígitos)
     """
     if isinstance(telefone_raw, dict):
         return telefone_raw.get("number", "")
-    
+
     telefone_str = str(telefone_raw)
-    
+
     # Se começar com {'type':", tenta desempacotar
     if "{'type':" in telefone_str:
         try:
@@ -27,8 +26,23 @@ def extrair_numero_telefone(telefone_raw):
             return tel_dict.get('number', telefone_str)
         except:
             pass
-    
-    return telefone_str
+
+    # Mantém apenas dígitos (remove formatação)
+    return "".join([c for c in telefone_str if c.isdigit()])
+
+
+def formatar_telefone_br(telefone):
+    """Formata um telefone brasileiro (somente dígitos) para a máscara (XX) XXXXX-XXXX."""
+    if not telefone:
+        return ""
+
+    digitos = "".join([c for c in str(telefone) if c.isdigit()])
+    if len(digitos) == 11:  # (XX) 9XXXX-XXXX
+        return f"({digitos[0:2]}) {digitos[2:7]}-{digitos[7:]}"
+    if len(digitos) == 10:  # (XX) XXXX-XXXX
+        return f"({digitos[0:2]}) {digitos[2:6]}-{digitos[6:]}"
+    # fallback genérico
+    return digitos
 
 
 def formatar_veiculo(veiculo):
@@ -63,7 +77,7 @@ def formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas, ma
     
     return {
         "id": str(reserva.get("id", "")), # Força ser string
-        "title": f"🚗 {motivo}",
+        "title": f"{motivo} - {mapa_motoristas.get(reserva.get('id_motorista'), 'N/A')}",
         "start": reserva.get("data_retirada"),
         "end": reserva.get("data_devolucao"),
         "backgroundColor": cor_evento,
@@ -78,17 +92,58 @@ def formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas, ma
     }
 
 
-def exibir_reserva_no_calendario(reservas, mapa_veiculos, mapa_motoristas, filtro_veiculo="Todos", filtro_motorista="Todos", mapa_cores=None):
-    """Filtra e formata reservas para o calendário."""
+from utils.date_utils import de_iso
+
+
+def filtrar_reservas(
+    reservas,
+    filtro_veiculo="Todos",
+    filtro_motorista="Todos",
+    filtro_data_inicio=None,
+    filtro_data_fim=None,
+):
+    """Filtra reservas por veículo, motorista e intervalo de datas."""
     eventos = []
+
     for reserva in reservas:
-        # Aplicar filtros
         if filtro_veiculo != "Todos" and reserva["Veiculo_id"] != filtro_veiculo:
             continue
-            
+
         if filtro_motorista != "Todos" and reserva.get("id_motorista") != filtro_motorista:
             continue
-        
-        eventos.append(formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas, mapa_cores))
-    
+
+        # Filtro de data (interseção de intervalo)
+        if filtro_data_inicio and filtro_data_fim:
+            inicio_reserva = de_iso(reserva.get("data_retirada"))
+            fim_reserva = de_iso(reserva.get("data_devolucao"))
+
+            if fim_reserva.date() < filtro_data_inicio or inicio_reserva.date() > filtro_data_fim:
+                continue
+
+        eventos.append(reserva)
+
     return eventos
+
+
+def exibir_reserva_no_calendario(
+    reservas,
+    mapa_veiculos,
+    mapa_motoristas,
+    filtro_veiculo="Todos",
+    filtro_motorista="Todos",
+    filtro_data_inicio=None,
+    filtro_data_fim=None,
+    mapa_cores=None,
+):
+    """Filtra e formata reservas para o calendário."""
+    reservas_filtradas = filtrar_reservas(
+        reservas,
+        filtro_veiculo,
+        filtro_motorista,
+        filtro_data_inicio,
+        filtro_data_fim,
+    )
+    return [
+        formatar_reserva_para_calendario(r, mapa_veiculos, mapa_motoristas, mapa_cores)
+        for r in reservas_filtradas
+    ]
