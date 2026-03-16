@@ -66,6 +66,13 @@ def renderizar():
             st.write("")
             st.button("🔄 Resetar", on_click=limpar_filtros, use_container_width=True)
     
+    #Legenda dos veículos:
+    st.markdown("### Legenda dos Veículos:")
+    for veiculos in dados_veiculos:
+        st.markdown(f"<div style='background-color: {veiculos['Cor']}; padding: 5px; margin: 5px; border-radius: 5px; color: white;'>{veiculos['Modelo']} - {veiculos['Referencia']}</div>", unsafe_allow_html=True)
+        
+    st.markdown("---")
+    
     # Configuração do calendário
     opcoes_calendario = CALENDAR_OPTIONS.copy()
     opcoes_calendario["initialDate"] = str(st.session_state["filtro_data"])
