@@ -73,8 +73,7 @@ def formatar_reserva_para_calendario(reserva, mapa_veiculos, mapa_motoristas, ma
             "motorista": mapa_motoristas.get(reserva.get("id_motorista"), "N/A"),
             "veiculo_nome": mapa_veiculos.get(reserva.get("Veiculo_id"), "Desconhecido"),
             "veiculo_id": reserva.get("Veiculo_id"),
-            "motorista_nome": mapa_motoristas.get(reserva.get("id_motorista"), "Desconhecido"),
-            "debug_cor": cor_evento
+            "motorista_nome": mapa_motoristas.get(reserva.get("id_motorista"), "Desconhecido")
         }
     }
 
