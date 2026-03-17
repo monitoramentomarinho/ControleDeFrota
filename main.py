@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # 2. Importa as suas telas que já estão prontas
-from pages.screens import home, reservas, veiculos, motoristas, cadastro_reserva, editar_reserva
+from pages.screens import devolucao, home, reservas, veiculos, motoristas, cadastro_reserva, devolucao
 
 # 3. Transforma as suas funções em Páginas Nativas do Streamlit
 # O parâmetro url_path garante que cada tela tenha seu próprio link único (ex: /home, /veiculos)
@@ -25,12 +25,12 @@ pg_motoristas = st.Page(motoristas.renderizar, title="Motoristas", icon="👥", 
 
 # Agrupando telas de formulário em uma seção separada
 pg_cad_reserva = st.Page(cadastro_reserva.renderizar, title="Cadastrar Nova Reserva", icon="➕", url_path="cadastrar_reserva")
-pg_edit_reserva = st.Page(editar_reserva.renderizar, title="Editar Reserva Existente", icon="✏️", url_path="editar_reserva")
+pg_devolucao = st.Page(devolucao.renderizar, title="Registrar Devolução", icon="✅", url_path="devolucao")
 
 # 4. Configura o menu e as seções
 menu = {
     "Menu Principal": [pg_home, pg_reservas, pg_veiculos, pg_motoristas],
-    "Ações e Lançamentos": [pg_cad_reserva, pg_edit_reserva]
+    "Ações e Lançamentos": [pg_cad_reserva, pg_devolucao]
 }
 
 # 5. Roda a navegação mágica do Streamlit

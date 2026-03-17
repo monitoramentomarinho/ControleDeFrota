@@ -15,7 +15,6 @@ def renderizar():
     
     reservas = fetch_reservas()
     
-    # Reutiliza os filtros que também estão na tela de calendário
     from database.supabase import fetch_veiculos, fetch_motoristas
     from utils.formatters import criar_mapa_veiculos, criar_mapa_motoristas, filtrar_reservas
     from pages.components.components import renderizar_filtros_reservas
