@@ -11,7 +11,7 @@ from database.supabase import (
     upload_imagem,
     clear_motoristas_cache,
 )
-from utils.formatters import extrair_numero_telefone, formatar_telefone_br
+from utils.formatters import extrair_numero_telefone, formatar_telefone_br, para_data_br
 from pages.components.components import exibir_foto_motorista
 from config.settings import STORAGE_MOTORISTAS_PATH
 
@@ -40,13 +40,13 @@ def renderizar():
             
             with col3:
                 st.write("Reserva atual:")
-                reserva_atual = [r for r in todas_reservas if r.get("id_motorista") == motorista["id"]]
+                reserva_atual = [r for r in todas_reservas if r.get("id_motorista") == motorista["id"] and (r.get("status", "Em andamento") == "Em andamento")]
                 
                 if reserva_atual:
                     reserva = reserva_atual[0]
                     st.write(f"Motivo da locação: {reserva['motivo_locacao']}")
-                    st.write(f"Data de início: {reserva['data_retirada']}")
-                    st.write(f"Data de término: {reserva['data_devolucao']}")
+                    st.write(f"Data de início: {para_data_br(reserva['data_retirada'])}")
+                    st.write(f"Data de término: {para_data_br(reserva['data_devolucao'])}")
                 else:
                     st.write("Nenhuma reserva ativa.")
     

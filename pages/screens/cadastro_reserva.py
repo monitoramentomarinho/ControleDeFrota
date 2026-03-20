@@ -28,6 +28,7 @@ def renderizar():
     
     with st.form("Formulário de Reserva", clear_on_submit=True):
         motivo = st.text_input("Motivo da Locação")
+        destino = st.text_input("Destino da Viagem (Local)")
         data_retirada = st.datetime_input("Data da Retirada", format="DD/MM/YYYY")
         data_devolucao = st.datetime_input("Data da Devolução", format="DD/MM/YYYY")
         
@@ -64,10 +65,12 @@ def renderizar():
                     # Insere nova reserva
                     nova_reserva = {
                         "motivo_locacao": motivo,
+                        "destino": destino,
                         "data_retirada": data_retirada.isoformat(),
                         "data_devolucao": data_devolucao.isoformat(),
                         "Veiculo_id": veiculo_id,
-                        "id_motorista": motorista_id
+                        "id_motorista": motorista_id,
+                        "status": "Em andamento"
                     }
                     result = insert_reserva(nova_reserva)
                     if result.data:

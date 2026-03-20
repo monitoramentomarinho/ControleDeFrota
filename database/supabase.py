@@ -122,6 +122,55 @@ def upload_imagem(caminho_armazenamento, bytes_arquivo, content_type):
     return url_response
 
 
+def listar_fotos_devolucao(reserva_id):
+    """
+    Lista todas as fotos de uma devolução específica.
+    
+    Args:
+        reserva_id: ID da reserva
+    
+    Returns:
+        Lista de dicionários com {'nome': str, 'url': str} para cada foto
+    """
+    client = get_supabase_client()
+    try:
+        # Lista todos os arquivos que começam com "devolucoes/" e contêm o reserva_id
+        lista_completa = client.storage.from_(STORAGE_BUCKET).list("devolucoes")
+        
+        fotos = []
+        
+        # Recursivamente procura por fotos da reserva em todas as subpastas
+        def procurar_fotos_recursivo(caminho, prefixo_procura):
+            try:
+                items = client.storage.from_(STORAGE_BUCKET).list(caminho)
+                for item in items:
+                    # Se for diretório, continua buscando
+                    if item.get('name') and not item.get('id'):
+                        novo_caminho = f"{caminho}/{item['name']}" if caminho else item['name']
+                        procurar_fotos_recursivo(novo_caminho, prefixo_procura)
+                    # Se for arquivo e contém o prefixo procurado
+                    elif item.get('name') and prefixo_procura in item.get('name', ''):
+                        caminho_completo = f"{caminho}/{item['name']}" if caminho else item['name']
+                        url = client.storage.from_(STORAGE_BUCKET).get_public_url(caminho_completo)
+                        if isinstance(url, dict):
+                            url = url.get("public_url", url)
+                        
+                        fotos.append({
+                            'nome': item['name'],
+                            'url': url,
+                            'caminho': caminho_completo
+                        })
+            except Exception:
+                pass
+        
+        procurar_fotos_recursivo("devolucoes", f"reserva_{reserva_id}")
+        return fotos
+        
+    except Exception as e:
+        st.warning(f"Erro ao listar fotos: {e}")
+        return []
+
+
 # ============= UTILITÁRIOS =============
 def sincronizar_status_veiculo(veiculo_id, reservas=None):
     """
@@ -148,7 +197,9 @@ def sincronizar_status_veiculo(veiculo_id, reservas=None):
     # Verifica se há reservas ativas/futuras
     reservas_ativas = [
         r for r in reservas
-        if r["Veiculo_id"] == veiculo_id and r["data_devolucao"] >= agora_iso()
+        if r["Veiculo_id"] == veiculo_id 
+        and r["data_devolucao"] >= agora_iso()
+        and r.get("status", "Em andamento") == "Em andamento"
     ]
     
     novo_status = "Reservado" if len(reservas_ativas) > 0 else "Disponível"

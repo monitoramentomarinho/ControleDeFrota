@@ -58,6 +58,7 @@ def renderizar():
     # Formulário de edição
     with st.form("Formulário de Edição"):
         motivo = st.text_input("Motivo da Locação", value=reserva_atual["motivo_locacao"])
+        destino = st.text_input("Destino da Viagem", value=reserva_atual["destino"])
         data_retirada = st.datetime_input("Data da Retirada", value=inicio_default, format="DD/MM/YYYY")
         data_devolucao = st.datetime_input("Data da Devolução", value=fim_default, format="DD/MM/YYYY")
         
@@ -93,6 +94,7 @@ def renderizar():
                     # Atualiza
                     dados_atualizados = {
                         "motivo_locacao": motivo,
+                        "destino": destino,
                         "data_retirada": data_retirada.isoformat(),
                         "data_devolucao": data_devolucao.isoformat(),
                         "Veiculo_id": veiculo_id,

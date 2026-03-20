@@ -17,10 +17,12 @@ def mostrar_detalhes(evento_info):
     end_formatted = para_formato_br(reserva.get('end', ''))
     
     st.write(f"**Motivo:** {reserva.get('title', 'Sem título').replace('🚗 ', '')}")
+    st.write(f"**Destino:** {extended.get('destino', 'Não informado')}")
     st.write(f"**Início:** {start_formatted}")
     st.write(f"**Fim:** {end_formatted}")
     st.write(f"**Veículo:** {extended.get('veiculo_nome', 'Não informado')}")
     st.write(f"**Motorista:** {extended.get('motorista_nome', 'Não informado')}")
+    st.write(f"**Status:** {extended.get('status', 'Desconecido')}")
     
     st.divider()
     
