@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 import io
+import time
 from PIL import Image
 
 # Importando as funções do banco de dados (já preparadas no supabase.py)
@@ -116,7 +117,16 @@ def renderizar():
                                 bytes_comprimidos = comprimir_imagem(arquivo.getvalue())
                                 
                                 # 2. Define a pasta e o nome do arquivo no Storage do Supabase
-                                caminho_storage = f"devolucoes/reserva_{reserva_selecionada['id']}_{nome_foto}_{timestamp}.jpg"
+                                motivo = str(reserva_selecionada.get('motivo_locacao', 'sem_motivo')).strip()
+                                motivo_sanitizado = motivo.replace(' ', '_').replace('/', '-').replace('\\', '-').replace(':', '-')
+                                data_reserva_raw = reserva_selecionada.get('data_retirada') or reserva_selecionada.get('data_devolucao') or ''
+                                if isinstance(data_reserva_raw, str) and 'T' in data_reserva_raw:
+                                    data_reserva = data_reserva_raw.split('T')[0]
+                                else:
+                                    data_reserva = str(data_reserva_raw).split(' ')[0]
+                                data_reserva_sanitizada = data_reserva.replace('/', '-').replace(' ', '_')
+                                pasta = f"devolucoes/{motivo_sanitizado}_{data_reserva_sanitizada}"
+                                caminho_storage = f"{pasta}/reserva_{reserva_selecionada['id']}_{nome_foto}_{timestamp}.jpg"
                                 
                                 # 3. Faz o upload (O Supabase vai colocar dentro da pasta 'devolucoes' no bucket 'Imagens')
                                 upload_imagem(caminho_storage, bytes_comprimidos, "image/jpeg")
@@ -138,7 +148,9 @@ def renderizar():
                             
                             st.success("Devolução concluída com sucesso! Fotos salvas com tamanho reduzido.")
                             st.session_state.reserva_devolucao = None
+                            time.sleep(2)
                             st.rerun()
+                            
                             
                         except Exception as e:
                             st.error(f"Erro ao processar devolução: {e}")
